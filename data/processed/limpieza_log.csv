@@ -1,0 +1,14 @@
+etapa,regla,filas_eliminadas,%_del_total
+fija,pickup fuera de mayo 2022,143,0.003985179590864185
+fija,filas duplicadas,0,0.0
+fija,zona desconocida (264/265),65026,1.8121698466820595
+fija,RatecodeID 5/6/99,28754,0.8013276500399215
+fija,payment_type 3/4/6,30381,0.8466695185317819
+fija,"duración fuera de [1, 180] min",24754,0.6898540950507135
+fija,"distancia fuera de (0, 100] mi",12241,0.3411369466557237
+fija,"tarifa fuera de [2.5, 500] USD",3592,0.10010325238030875
+fija,"velocidad fuera de [1, 80] mph",1694,0.04720905053792957
+fija,tarifa incoherente con distancia/tiempo,1069,0.029791307570865826
+tope p99.9 (train),train: supera algún tope,5999,0.16718246409506465
+tope p99.9 (train),val: supera algún tope,1743,0.04857460158654737
+tope p99.9 (train),test: supera algún tope,994,0.02770117841481818
