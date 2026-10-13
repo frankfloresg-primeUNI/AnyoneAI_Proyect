@@ -2,9 +2,13 @@
 .venv/
 venv/
 .env
+.venv-linux/
 
 # Data cruda (se descarga de la TLC, ver README)
 data/yellow_tripdata_*.parquet
+
+# Datos procesados de entrenamiento
+data/processed/train.csv/
 
 # Python / Jupyter
 __pycache__/

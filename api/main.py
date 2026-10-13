@@ -3,20 +3,26 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 import os
 from dotenv import load_dotenv
-from api.google_maps import get_route
-from api.zones import coords_to_zone, InvalidCoordinatesError, OutOfServiceAreaError
+#from api.google_maps import get_route
+from api.osrm import get_route
+from api.zones import ZoneLocator, InvalidCoordinatesError, OutOfServiceAreaError
 from api.features import build_features
 
 app = FastAPI()
+zone_locator = ZoneLocator("data/reference/taxi_zones.geojson")
 load_dotenv()
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
+class Coordinates(BaseModel):
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+
 class TripRequest(BaseModel):
-    pickup_latitude: float = Field(ge=-90, le=90)
-    pickup_longitude: float = Field(ge=-180, le=180)
-    dropoff_latitude: float = Field(ge=-90, le=90)
-    dropoff_longitude: float = Field(ge=-180, le=180)
+    pickup: Coordinates
+    dropoff: Coordinates
     pickup_datetime: datetime
+    passenger_count: int = Field(ge=1, le=6)
+    trip_distance_miles: float | None = Field(default=None, gt=0)
 
 @app.get("/")
 def home():
@@ -25,39 +31,36 @@ def home():
 @app.post("/predict")
 def predict(trip: TripRequest):
     try:
-        pickup_zone = coords_to_zone(trip.pickup_latitude, trip.pickup_longitude)
-        dropoff_zone = coords_to_zone(trip.dropoff_latitude, trip.dropoff_longitude)
+        pickup_zone = zone_locator.coords_to_zone(trip.pickup.lat, trip.pickup.lon)
+        dropoff_zone = zone_locator.coords_to_zone(trip.dropoff.lat, trip.dropoff.lon)
     except (InvalidCoordinatesError, OutOfServiceAreaError) as error:
         raise HTTPException(status_code=422, detail=str(error)) from error
 
-    route = get_route(
-        origin_lat=trip.pickup_latitude,
-        origin_lng=trip.pickup_longitude,
-        destination_lat=trip.dropoff_latitude,
-        destination_lng=trip.dropoff_longitude,
-        api_key=GOOGLE_MAPS_API_KEY
-    )
-
-    distance_meters = route["routes"][0]["distanceMeters"]
-    distance_miles = distance_meters / 1609.344
+    if trip.trip_distance_miles is not None:
+        distance_miles = trip.trip_distance_miles
+    else:
+        route = get_route(
+            origin_lat=trip.pickup.lat,
+            origin_lng=trip.pickup.lon,
+            destination_lat=trip.dropoff.lat,
+            destination_lng=trip.dropoff.lon
+        )
+        distance_miles = route["distance_meters"] / 1609.344
 
     features = build_features(
-    pickup_zone=pickup_zone,
-    dropoff_zone=dropoff_zone,
-    distance_miles=distance_miles,
-    pickup_datetime=trip.pickup_datetime
+        pickup_zone=pickup_zone.location_id,
+        dropoff_zone=dropoff_zone.location_id,
+        distance_miles=distance_miles,
+        pickup_datetime=trip.pickup_datetime
     )
 
     return {
-        "message": "Ruta calculada correctamente",
+
         "trip_distance_miles": round(distance_miles, 2),
-        "encoded_polyline": route["routes"][0]["polyline"]["encodedPolyline"],
-        "pickup_hour": features["pickup_hour"],
-        "pickup_dow": features["pickup_dow"],
-        "is_airport_trip": features["is_airport_trip"],
-        "PULocationID": features["PULocationID"],
-        "DOLocationID": features["DOLocationID"],
-        "morning_rush": features["morning_rush"],
-        "night_rush": features["night_rush"],
-        "weekend_rush": features["weekend_rush"]
+        "pickup_zone": {"location_id": pickup_zone.location_id,"name": pickup_zone.zone,"borough": pickup_zone.borough},
+        "dropoff_zone": {"location_id": dropoff_zone.location_id,"name": dropoff_zone.zone,"borough": dropoff_zone.borough},
+        "fare_amount": 52.00,
+        "trip_duration_min": 41.3,
+        "total_amount": 59.50,
+        "model_version": "mock"
     }
