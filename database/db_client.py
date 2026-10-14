@@ -1,14 +1,14 @@
 """
 Cliente de la base de logs (PostgreSQL) para la API de predicción.
 
-Uso típico en FastAPI:
+Uso en FastAPI (desde la raíz del repo):
 
-    import db_client
+    from database import db_client
 
-    db_client.open_pool()                      # al iniciar la API
-    db_client.log_prediction(...)              # después de predecir
-    db_client.log_exception(exc, endpoint=...) # en el manejador de errores
-    db_client.close_pool()                     # al apagar la API
+    db_client.open_pool()                       # al iniciar la API
+    db_client.log_prediction(features=..., ...) # después de predecir
+    db_client.log_error(...)                    # errores y eventos (422, OSRM...)
+    db_client.close_pool()                      # al apagar la API
 
 Las funciones de escritura NO lanzan excepciones por defecto: si la base falla,
 registran el problema con `logging` y devuelven None. Así la API sigue respondiendo.
@@ -28,13 +28,26 @@ from dotenv import load_dotenv
 from psycopg.conninfo import make_conninfo
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
-from psycopg_pool import ConnectionPool
+from psycopg_pool import ConnectionPool, PoolTimeout
 
 # Lee database/.env. Las variables de entorno que ya existan tienen prioridad.
 load_dotenv(Path(__file__).with_name(".env"))
 
 logger = logging.getLogger(__name__)
 _pool: ConnectionPool | None = None
+
+# Los 8 campos que recibe el modelo: clave en el dict de features -> parámetro del procedure
+MODEL_FEATURES = {
+    "PULocationID": "p_pu_location_id",
+    "DOLocationID": "p_do_location_id",
+    "pickup_hour": "p_pickup_hour",
+    "pickup_dow": "p_pickup_dow",
+    "is_airport_trip": "p_is_airport_trip",
+    "morning_rush": "p_morning_rush",
+    "night_rush": "p_night_rush",
+    "weekend_rush": "p_weekend_rush",
+}
+_FLAGS = {"is_airport_trip", "morning_rush", "night_rush", "weekend_rush"}
 
 
 # ---------------------------------------------------------------------
@@ -54,11 +67,19 @@ def _conninfo() -> str:
 
 
 def open_pool(min_size: int = 1, max_size: int = 5, timeout: float = 10) -> ConnectionPool:
-    """Abre el pool de conexiones. Llamar una vez al iniciar la API."""
+    """
+    Abre el pool de conexiones. Llamar una vez al iniciar la API.
+    Si la base no responde, avisa y sigue: la API arranca igual y el pool
+    reintenta conectarse en segundo plano.
+    """
     global _pool
     if _pool is None:
-        _pool = ConnectionPool(_conninfo(), min_size=min_size, max_size=max_size, open=True)
-        _pool.wait(timeout=timeout)
+        _pool = ConnectionPool(_conninfo(), min_size=min_size, max_size=max_size,
+                               timeout=3, open=True)
+        try:
+            _pool.wait(timeout=timeout)
+        except PoolTimeout:
+            logger.warning("La base de datos no responde: la API sigue y el pool reintentará en segundo plano")
     return _pool
 
 
@@ -111,11 +132,11 @@ def _jsonb(v: Any) -> Jsonb | None:
 
 
 def _call(function: str, params: dict, fetch: str = "one", raise_errors: bool = False):
-    """Ejecuta SELECT ... FROM function(p => valor, ...) solo con los parámetros no nulos."""
-    params = {k: v for k, v in params.items() if v is not None}
-    args = ", ".join(f"{k} => %({k})s" for k in params)
-    sql = f"SELECT * FROM {function}({args})"
+    """Ejecuta SELECT * FROM function(p => valor, ...) solo con los parámetros no nulos."""
     try:
+        params = {k: v for k, v in params.items() if v is not None}
+        args = ", ".join(f"{k} => %({k})s" for k in params)
+        sql = f"SELECT * FROM {function}({args})"
         with get_pool().connection() as conn:
             cur = conn.cursor(row_factory=dict_row)
             cur.execute(sql, params)
@@ -132,18 +153,17 @@ def _call(function: str, params: dict, fetch: str = "one", raise_errors: bool = 
 # ---------------------------------------------------------------------
 def log_prediction(
     *,
+    features: dict,
     pickup_datetime: datetime | str,
-    pu_location_id: int,
-    do_location_id: int,
-    trip_distance: float,
-    latency_ms: float,
+    model_latency_ms: float,
+    total_latency_ms: float,
     predicted_fare_usd: float | None = None,
     predicted_duration_min: float | None = None,
-    features: dict | None = None,
+    predicted_total_amount_usd: float | None = None,
     fare_latency_ms: float | None = None,
     duration_latency_ms: float | None = None,
-    fare_model_version: str | None = None,
-    duration_model_version: str | None = None,
+    estimated_distance_miles: float | None = None,
+    model_version: str | None = None,
     request_payload: dict | None = None,
     request_id: uuid.UUID | str | None = None,
     client_source: str | None = None,
@@ -152,36 +172,41 @@ def log_prediction(
     """
     Registra una predicción. Devuelve (prediction_id, request_id) o None si falló.
 
-    features: dict con pickup_hour, pickup_dow, is_airport_trip, morning_rush,
-              night_rush, weekend_rush (los mismos que recibe el modelo).
+    features: el mismo dict que recibe el modelo, con los 8 campos
+              PULocationID, DOLocationID, pickup_hour, pickup_dow,
+              is_airport_trip, morning_rush, night_rush, weekend_rush.
+              Las claves extra se ignoran.
     """
-    f = features or {}
-    row = _call(
-        "sp_log_prediction",
-        {
-            "p_pickup_datetime": _datetime(pickup_datetime),
-            "p_pu_location_id": _int(pu_location_id),
-            "p_do_location_id": _int(do_location_id),
-            "p_trip_distance": _float(trip_distance),
-            "p_latency_ms": _float(latency_ms),
-            "p_predicted_fare_usd": _float(predicted_fare_usd),
-            "p_predicted_duration_min": _float(predicted_duration_min),
-            "p_pickup_hour": _int(f.get("pickup_hour")),
-            "p_pickup_dow": _int(f.get("pickup_dow")),
-            "p_is_airport_trip": _bool(f.get("is_airport_trip")),
-            "p_morning_rush": _bool(f.get("morning_rush")),
-            "p_night_rush": _bool(f.get("night_rush")),
-            "p_weekend_rush": _bool(f.get("weekend_rush")),
-            "p_fare_latency_ms": _float(fare_latency_ms),
-            "p_duration_latency_ms": _float(duration_latency_ms),
-            "p_fare_model_version": fare_model_version,
-            "p_duration_model_version": duration_model_version,
-            "p_request_payload": _jsonb(request_payload),
-            "p_request_id": request_id,
-            "p_client_source": client_source,
-        },
-        raise_errors=raise_errors,
-    )
+    try:
+        faltan = [k for k in MODEL_FEATURES if features.get(k) is None]
+        if faltan:
+            raise ValueError(f"Faltan campos del modelo en features: {faltan}")
+        params = {
+            param: (_bool(features[key]) if key in _FLAGS else _int(features[key]))
+            for key, param in MODEL_FEATURES.items()
+        }
+    except Exception:
+        if raise_errors:
+            raise
+        logger.exception("No se pudo registrar la predicción: features inválidas")
+        return None
+
+    params.update({
+        "p_pickup_datetime": _datetime(pickup_datetime),
+        "p_model_latency_ms": _float(model_latency_ms),
+        "p_total_latency_ms": _float(total_latency_ms),
+        "p_predicted_fare_usd": _float(predicted_fare_usd),
+        "p_predicted_duration_min": _float(predicted_duration_min),
+        "p_predicted_total_amount_usd": _float(predicted_total_amount_usd),
+        "p_fare_latency_ms": _float(fare_latency_ms),
+        "p_duration_latency_ms": _float(duration_latency_ms),
+        "p_estimated_distance_miles": _float(estimated_distance_miles),
+        "p_model_version": model_version,
+        "p_request_payload": _jsonb(request_payload),
+        "p_request_id": request_id,
+        "p_client_source": client_source,
+    })
+    row = _call("sp_log_prediction", params, raise_errors=raise_errors)
     return None if row is None else (row["prediction_id"], row["request_id"])
 
 
@@ -200,7 +225,15 @@ def log_error(
     client_source: str | None = None,
     raise_errors: bool = False,
 ) -> int | None:
-    """Registra un error. severity: WARNING, ERROR o CRITICAL. Devuelve error_id o None."""
+    """
+    Registra un error o evento. Devuelve error_id o None.
+
+    severity:
+        INFO     -> fuera de alcance, no es error (ej. 422 coordenadas fuera de NYC)
+        WARNING  -> anomalía que no impidió responder
+        ERROR    -> falla real (ej. OSRM caído, error del modelo)
+        CRITICAL -> el sistema no puede responder
+    """
     row = _call(
         "sp_log_error",
         {
@@ -222,7 +255,8 @@ def log_error(
 
 
 def log_exception(exc: BaseException, **kwargs) -> int | None:
-    """Atajo para registrar una excepción con su tipo, mensaje y traceback."""
+    """Atajo para registrar una excepción con su tipo, mensaje y traceback.
+    Acepta los mismos parámetros que log_error (severity, component, status_code...)."""
     return log_error(
         error_type=type(exc).__name__,
         error_message=str(exc) or repr(exc),
@@ -242,8 +276,9 @@ def get_prediction(request_id: uuid.UUID | str) -> dict | None:
     return _call("sp_get_prediction", {"p_request_id": request_id}, raise_errors=True)
 
 
-def latency_stats(date_from: datetime | None = None, date_to: datetime | None = None) -> dict:
-    return _call("sp_latency_stats", {"p_from": date_from, "p_to": date_to}, raise_errors=True)
+def latency_stats(date_from: datetime | None = None, date_to: datetime | None = None) -> list[dict]:
+    """Una fila por métrica: total_request, models, fare_model, duration_model."""
+    return _call("sp_latency_stats", {"p_from": date_from, "p_to": date_to}, fetch="all", raise_errors=True)
 
 
 def get_recent_errors(limit: int = 50) -> list[dict]:
