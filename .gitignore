@@ -2,6 +2,9 @@
 .venv/
 venv/
 
+# Credenciales (nunca subir)
+.env
+
 # Data cruda (se descarga de la TLC, ver README)
 data/yellow_tripdata_*.parquet
 
