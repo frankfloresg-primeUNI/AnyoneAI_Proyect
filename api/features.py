@@ -12,7 +12,7 @@ def build_features(pickup_zone, dropoff_zone, distance_miles, pickup_datetime):
     laborable = pickup_dow < 5
 
     morning_rush = int(laborable and pickup_hour in range(7, 10))
-    night_rush = int(laborable and pickup_hour in range(16, 20))
+    night_rush = int(laborable and pickup_hour in range(17, 20))
     weekend_rush = int(not laborable and pickup_hour in range(10, 20))
 
     return {

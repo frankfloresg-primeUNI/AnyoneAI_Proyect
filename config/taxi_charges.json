@@ -1,0 +1,26 @@
+{
+  "mta_state_surcharge": 0.50,
+  "improvement_surcharge": 1.00,
+  "night_surcharge": 1.00,
+  "rush_hour_surcharge": 2.50,
+  "congestion_surcharge": 2.50,
+  "congestion_pricing": 0.75,
+  "airport_access_fee": 2.00,
+  "laguardia_surcharge": 5.00,
+  "jfk_manhattan_flat_fare": 70.00,
+  "jfk_rush_hour_surcharge": 5.00,
+  "rush_hour_holidays": [
+  "2026-01-01",
+  "2026-01-19",
+  "2026-02-12",
+  "2026-02-16",
+  "2026-05-25",
+  "2026-06-19",
+  "2026-07-04",
+  "2026-09-07",
+  "2026-10-12",
+  "2026-11-03",
+  "2026-11-11",
+  "2026-11-26",
+  "2026-12-25"]
+}
