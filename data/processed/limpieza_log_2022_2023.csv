@@ -1,0 +1,193 @@
+periodo,tipo,regla,filas
+2022-01,elimina fila,Fecha fuera del mes,52
+2022-01,elimina fila,Filas completamente duplicadas,0
+2022-01,elimina fila,duration_min <= 1 o > 180,33129
+2022-01,elimina fila,trip_distance < 0.1 o > 100,12972
+2022-01,elimina fila,avg_speed_mph < 1 o > 80,767
+2022-01,solo tarifa (marca),RatecodeID = 5,4422
+2022-01,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),9747
+2022-01,solo tarifa (marca),fare_amount > 500,1
+2022-02,elimina fila,Fecha fuera del mes,64
+2022-02,elimina fila,Filas completamente duplicadas,0
+2022-02,elimina fila,duration_min <= 1 o > 180,37508
+2022-02,elimina fila,trip_distance < 0.1 o > 100,14594
+2022-02,elimina fila,avg_speed_mph < 1 o > 80,795
+2022-02,solo tarifa (marca),RatecodeID = 5,4431
+2022-02,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),11591
+2022-02,solo tarifa (marca),fare_amount > 500,0
+2022-03,elimina fila,Fecha fuera del mes,89
+2022-03,elimina fila,Filas completamente duplicadas,0
+2022-03,elimina fila,duration_min <= 1 o > 180,48856
+2022-03,elimina fila,trip_distance < 0.1 o > 100,17270
+2022-03,elimina fila,avg_speed_mph < 1 o > 80,1050
+2022-03,solo tarifa (marca),RatecodeID = 5,6889
+2022-03,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),14759
+2022-03,solo tarifa (marca),fare_amount > 500,0
+2022-04,elimina fila,Fecha fuera del mes,158
+2022-04,elimina fila,Filas completamente duplicadas,0
+2022-04,elimina fila,duration_min <= 1 o > 180,51542
+2022-04,elimina fila,trip_distance < 0.1 o > 100,15959
+2022-04,elimina fila,avg_speed_mph < 1 o > 80,1010
+2022-04,solo tarifa (marca),RatecodeID = 5,7910
+2022-04,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),14112
+2022-04,solo tarifa (marca),fare_amount > 500,1
+2022-05,elimina fila,Fecha fuera del mes,143
+2022-05,elimina fila,Filas completamente duplicadas,0
+2022-05,elimina fila,duration_min <= 1 o > 180,54467
+2022-05,elimina fila,trip_distance < 0.1 o > 100,19209
+2022-05,elimina fila,avg_speed_mph < 1 o > 80,1208
+2022-05,solo tarifa (marca),RatecodeID = 5,10258
+2022-05,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),14740
+2022-05,solo tarifa (marca),fare_amount > 500,1
+2022-06,elimina fila,Fecha fuera del mes,512
+2022-06,elimina fila,Filas completamente duplicadas,0
+2022-06,elimina fila,duration_min <= 1 o > 180,60690
+2022-06,elimina fila,trip_distance < 0.1 o > 100,21185
+2022-06,elimina fila,avg_speed_mph < 1 o > 80,1181
+2022-06,solo tarifa (marca),RatecodeID = 5,10507
+2022-06,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),15708
+2022-06,solo tarifa (marca),fare_amount > 500,55
+2022-07,elimina fila,Fecha fuera del mes,82
+2022-07,elimina fila,Filas completamente duplicadas,0
+2022-07,elimina fila,duration_min <= 1 o > 180,50200
+2022-07,elimina fila,trip_distance < 0.1 o > 100,19046
+2022-07,elimina fila,avg_speed_mph < 1 o > 80,916
+2022-07,solo tarifa (marca),RatecodeID = 5,9845
+2022-07,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),15770
+2022-07,solo tarifa (marca),fare_amount > 500,0
+2022-08,elimina fila,Fecha fuera del mes,53
+2022-08,elimina fila,Filas completamente duplicadas,0
+2022-08,elimina fila,duration_min <= 1 o > 180,49215
+2022-08,elimina fila,trip_distance < 0.1 o > 100,21940
+2022-08,elimina fila,avg_speed_mph < 1 o > 80,841
+2022-08,solo tarifa (marca),RatecodeID = 5,10166
+2022-08,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),16947
+2022-08,solo tarifa (marca),fare_amount > 500,0
+2022-09,elimina fila,Fecha fuera del mes,77
+2022-09,elimina fila,Filas completamente duplicadas,0
+2022-09,elimina fila,duration_min <= 1 o > 180,49030
+2022-09,elimina fila,trip_distance < 0.1 o > 100,24253
+2022-09,elimina fila,avg_speed_mph < 1 o > 80,1551
+2022-09,solo tarifa (marca),RatecodeID = 5,11002
+2022-09,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),15753
+2022-09,solo tarifa (marca),fare_amount > 500,2
+2022-10,elimina fila,Fecha fuera del mes,91
+2022-10,elimina fila,Filas completamente duplicadas,1
+2022-10,elimina fila,duration_min <= 1 o > 180,59549
+2022-10,elimina fila,trip_distance < 0.1 o > 100,28887
+2022-10,elimina fila,avg_speed_mph < 1 o > 80,1259
+2022-10,solo tarifa (marca),RatecodeID = 5,13057
+2022-10,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),19383
+2022-10,solo tarifa (marca),fare_amount > 500,1
+2022-11,elimina fila,Fecha fuera del mes,97
+2022-11,elimina fila,Filas completamente duplicadas,0
+2022-11,elimina fila,duration_min <= 1 o > 180,52114
+2022-11,elimina fila,trip_distance < 0.1 o > 100,32373
+2022-11,elimina fila,avg_speed_mph < 1 o > 80,1144
+2022-11,solo tarifa (marca),RatecodeID = 5,11512
+2022-11,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),18520
+2022-11,solo tarifa (marca),fare_amount > 500,1
+2022-12,elimina fila,Fecha fuera del mes,46
+2022-12,elimina fila,Filas completamente duplicadas,0
+2022-12,elimina fila,duration_min <= 1 o > 180,51673
+2022-12,elimina fila,trip_distance < 0.1 o > 100,34315
+2022-12,elimina fila,avg_speed_mph < 1 o > 80,1934
+2022-12,solo tarifa (marca),RatecodeID = 5,11492
+2022-12,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),20521
+2022-12,solo tarifa (marca),fare_amount > 500,1
+2023-01,elimina fila,Fecha fuera del mes,48
+2023-01,elimina fila,Filas completamente duplicadas,0
+2023-01,elimina fila,duration_min <= 1 o > 180,36653
+2023-01,elimina fila,trip_distance < 0.1 o > 100,25090
+2023-01,elimina fila,avg_speed_mph < 1 o > 80,895
+2023-01,solo tarifa (marca),RatecodeID = 5,4907
+2023-01,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),19861
+2023-01,solo tarifa (marca),fare_amount > 500,7
+2023-02,elimina fila,Fecha fuera del mes,55
+2023-02,elimina fila,Filas completamente duplicadas,0
+2023-02,elimina fila,duration_min <= 1 o > 180,35023
+2023-02,elimina fila,trip_distance < 0.1 o > 100,21999
+2023-02,elimina fila,avg_speed_mph < 1 o > 80,746
+2023-02,solo tarifa (marca),RatecodeID = 5,4347
+2023-02,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),19487
+2023-02,solo tarifa (marca),fare_amount > 500,9
+2023-03,elimina fila,Fecha fuera del mes,189
+2023-03,elimina fila,Filas completamente duplicadas,0
+2023-03,elimina fila,duration_min <= 1 o > 180,42211
+2023-03,elimina fila,trip_distance < 0.1 o > 100,26061
+2023-03,elimina fila,avg_speed_mph < 1 o > 80,1198
+2023-03,solo tarifa (marca),RatecodeID = 5,5217
+2023-03,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),23065
+2023-03,solo tarifa (marca),fare_amount > 500,8
+2023-04,elimina fila,Fecha fuera del mes,95
+2023-04,elimina fila,Filas completamente duplicadas,0
+2023-04,elimina fila,duration_min <= 1 o > 180,40322
+2023-04,elimina fila,trip_distance < 0.1 o > 100,19052
+2023-04,elimina fila,avg_speed_mph < 1 o > 80,1080
+2023-04,solo tarifa (marca),RatecodeID = 5,5881
+2023-04,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),23956
+2023-04,solo tarifa (marca),fare_amount > 500,9
+2023-05,elimina fila,Fecha fuera del mes,50
+2023-05,elimina fila,Filas completamente duplicadas,0
+2023-05,elimina fila,duration_min <= 1 o > 180,43291
+2023-05,elimina fila,trip_distance < 0.1 o > 100,23490
+2023-05,elimina fila,avg_speed_mph < 1 o > 80,1392
+2023-05,solo tarifa (marca),RatecodeID = 5,6399
+2023-05,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),25896
+2023-05,solo tarifa (marca),fare_amount > 500,12
+2023-06,elimina fila,Fecha fuera del mes,41
+2023-06,elimina fila,Filas completamente duplicadas,0
+2023-06,elimina fila,duration_min <= 1 o > 180,41112
+2023-06,elimina fila,trip_distance < 0.1 o > 100,24735
+2023-06,elimina fila,avg_speed_mph < 1 o > 80,1421
+2023-06,solo tarifa (marca),RatecodeID = 5,6607
+2023-06,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),25736
+2023-06,solo tarifa (marca),fare_amount > 500,16
+2023-07,elimina fila,Fecha fuera del mes,59
+2023-07,elimina fila,Filas completamente duplicadas,0
+2023-07,elimina fila,duration_min <= 1 o > 180,38416
+2023-07,elimina fila,trip_distance < 0.1 o > 100,28314
+2023-07,elimina fila,avg_speed_mph < 1 o > 80,1080
+2023-07,solo tarifa (marca),RatecodeID = 5,6349
+2023-07,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),25830
+2023-07,solo tarifa (marca),fare_amount > 500,13
+2023-08,elimina fila,Fecha fuera del mes,34
+2023-08,elimina fila,Filas completamente duplicadas,0
+2023-08,elimina fila,duration_min <= 1 o > 180,36757
+2023-08,elimina fila,trip_distance < 0.1 o > 100,36546
+2023-08,elimina fila,avg_speed_mph < 1 o > 80,1047
+2023-08,solo tarifa (marca),RatecodeID = 5,6517
+2023-08,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),26123
+2023-08,solo tarifa (marca),fare_amount > 500,20
+2023-09,elimina fila,Fecha fuera del mes,32
+2023-09,elimina fila,Filas completamente duplicadas,0
+2023-09,elimina fila,duration_min <= 1 o > 180,36162
+2023-09,elimina fila,trip_distance < 0.1 o > 100,78965
+2023-09,elimina fila,avg_speed_mph < 1 o > 80,2270
+2023-09,solo tarifa (marca),RatecodeID = 5,6675
+2023-09,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),24311
+2023-09,solo tarifa (marca),fare_amount > 500,11
+2023-10,elimina fila,Fecha fuera del mes,53
+2023-10,elimina fila,Filas completamente duplicadas,0
+2023-10,elimina fila,duration_min <= 1 o > 180,43849
+2023-10,elimina fila,trip_distance < 0.1 o > 100,97801
+2023-10,elimina fila,avg_speed_mph < 1 o > 80,2654
+2023-10,solo tarifa (marca),RatecodeID = 5,8111
+2023-10,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),30458
+2023-10,solo tarifa (marca),fare_amount > 500,7
+2023-11,elimina fila,Fecha fuera del mes,31
+2023-11,elimina fila,Filas completamente duplicadas,2
+2023-11,elimina fila,duration_min <= 1 o > 180,42161
+2023-11,elimina fila,trip_distance < 0.1 o > 100,80537
+2023-11,elimina fila,avg_speed_mph < 1 o > 80,2859
+2023-11,solo tarifa (marca),RatecodeID = 5,7856
+2023-11,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),30529
+2023-11,solo tarifa (marca),fare_amount > 500,7
+2023-12,elimina fila,Fecha fuera del mes,43
+2023-12,elimina fila,Filas completamente duplicadas,0
+2023-12,elimina fila,duration_min <= 1 o > 180,43688
+2023-12,elimina fila,trip_distance < 0.1 o > 100,49297
+2023-12,elimina fila,avg_speed_mph < 1 o > 80,3140
+2023-12,solo tarifa (marca),RatecodeID = 5,9231
+2023-12,solo tarifa (marca),fare_amount < bajada de bandera ($2.50 / $3.00),38214
+2023-12,solo tarifa (marca),fare_amount > 500,8

@@ -5,8 +5,13 @@ venv/
 # Credenciales (nunca subir)
 .env
 
-# Data cruda (se descarga de la TLC, ver README)
+# Data cruda (se descarga de la TLC con los notebooks)
 data/yellow_tripdata_*.parquet
+data/raw/
+
+# Archivo limpio 2022-2023: pesa cientos de MB (límite de GitHub: 100 MB)
+data/processed/yellow_2022_2023_clean.parquet
+*.part
 
 # Python / Jupyter
 __pycache__/
